@@ -13,7 +13,9 @@ const comments = [
 
 export function Post({ author, publishedAt, content }) {
 
-    const [comments, setComments] = useState([])
+    const [comments, setComments] = useState(['post top em'])
+    const [newCommentText, setNewCommentText] = useState([''])
+
 
     const publishedDateFormatted = format(publishedAt, "d 'de' LLLL 'às' HH:mm'h'", {
         locale: ptBR
@@ -26,7 +28,19 @@ export function Post({ author, publishedAt, content }) {
 
     function handleCreateNewComment() {
         event.preventDefault()
-        setComments([...comments, comments.length + 1])
+
+        setComments([...comments, newCommentText])
+        setNewCommentText('')
+    }
+
+    function handleNewCommentChange() {
+        setNewCommentText(event.target.value)
+    }
+
+    function deleteComment(commentToDelete) {
+        const commentsWithoutDeletedOne = comments.filter(comment => commentToDelete !== comment)
+
+        setComments(commentsWithoutDeletedOne)
     }
 
     return (
@@ -54,7 +68,7 @@ export function Post({ author, publishedAt, content }) {
 
             <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
                 <strong>Deixe seu feedback</strong>
-                <textarea placeholder='Deixe um comentário' />
+                <textarea name="comment" placeholder='Deixe um comentário' onChange={handleNewCommentChange} value={newCommentText}/>
                 <footer>
                   <button type="submit">Comentário</button>
                 </footer>
@@ -62,7 +76,7 @@ export function Post({ author, publishedAt, content }) {
 
             <div className={styles.commentList}>
                 {comments.map(comment => (
-                    <Comment />
+                    <Comment key={comment} content={comment} onDeleteComment={deleteComment} />
                 ))}
             </div>
         </article>
